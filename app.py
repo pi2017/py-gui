@@ -1,18 +1,106 @@
 """
 Author:Savchenko Oleksii
 Data: 02.2021
-
+Update: 08.2021
 
 """
 
-import tkinter as tk
-from tkinter import filedialog, Text, Label, Toplevel
-from time import strftime
+from sys import version_info
+if version_info.major == 2:
+    import Tkinter as tk
+elif version_info.major == 3:
+    import tkinter as tk
+from tkinter import filedialog, Text, Label, Toplevel, Menu, messagebox
+from time import *
 import os
+
+
+def addApp():
+
+    for widget in frame.winfo_children():
+        widget.destroy()
+
+    filename = filedialog.askopenfilename(
+        initialdir="/", title="Select file", filetypes=(("executables", "*.exe"), ("all files", "*.*")))
+    apps.append(filename)
+    print(apps)
+    for app in apps:
+        label = tk.Label(frame, text=app, bg="gray")
+        label.pack()
+
+
+def openWin():
+   global top
+   top = Toplevel(root)
+   Label(top, text=" Info ", font= ('Helvetica 14 bold')).pack()
+   canvas = tk.Canvas(top, height=520, width=460, bg="#263D42", cursor='crosshair')
+   canvas.pack(expand=False)
+
+   frame = tk.Frame(top, bg="white")
+   frame.place(relx=0.06, rely=0.10, relwidth=0.9, relheight=0.6)
+
+   closeWin = tk.Button(top, text="Close", padx=35, fg='white', bg="#263D42",
+   command=closeNewapps)
+   closeWin.pack()
+   top.grab_set()
+
+def faqtxt():
+    faq = tk.Tk()
+    faq.title("Питання користувачів")
+    txt_lbl="""Тренажер БПЛА - програмне забезпечення для навчання операторів.\n
+    Підвищення кваліфікації та вдосконалення навичок операторів корисного навантаження."""
+    labelExample = tk.Label(faq, justify=tk.LEFT, text=txt_lbl, height=10, width=80).pack(side="left")
+    labelExample.pack()
+    faq.mainloop()
+
+
+def opentxt():
+    app = tk.Tk()
+    app.title("Про програму")
+    txt_lbl="Тренажер для БПЛА\n Версія 0.8 beta"
+    labelExample = tk.Label(app, text=txt_lbl, height=10, width=35)
+    labelExample.pack()
+    app.mainloop()
+
+def runApps():
+    for app in apps:
+        os.startfile(app)
+
+
+def closeApps():
+    print("Window closed by customer")
+    root.destroy()
+
+
+def closeNewapps():
+    print("PopWin closed by customer")
+    top.destroy()
 
 
 root = tk.Tk()
 root.title('Тренажер БПЛА (beta version)')
+
+
+mainmenu = Menu(root)
+root.config(menu=mainmenu)
+
+
+filemenu = Menu(mainmenu, tearoff=0)
+filemenu.add_command(label="Запуск...", command=runApps)
+filemenu.add_command(label="Відкрити файл", command=addApp)
+filemenu.add_separator()
+filemenu.add_command(label="Вихід", command=closeApps)
+
+helpmenu = Menu(mainmenu, tearoff=0)
+helpmenu.add_command(label="FAQ", command=faqtxt)
+helpmenu.add_command(label="Про програму", command=opentxt)
+
+mainmenu.add_cascade(label="Файл",
+                     menu=filemenu)
+mainmenu.add_cascade(label="Довідка",
+                     menu=helpmenu)
+
+
 root.iconphoto(False, tk.PhotoImage(file='sim.png'))
 apps = []
 
@@ -40,66 +128,11 @@ lbl.pack(anchor='e')
 time()
 
 
-def addApp():
-
-    for widget in frame.winfo_children():
-        widget.destroy()
-
-    filename = filedialog.askopenfilename(
-        initialdir="/", title="Select file", filetypes=(("executables", "*.exe"), ("all files", "*.*")))
-    apps.append(filename)
-    print(apps)
-    for app in apps:
-        label = tk.Label(frame, text=app, bg="gray")
-        label.pack()
-
-
-def open_win():
-   global top
-   top = Toplevel(root)
-   Label(top, text= "Manual for operator", font= ('Helvetica 14 bold')).pack()
-   canvas = tk.Canvas(top, height=520, width=480, bg="#263D42", cursor='crosshair')
-   canvas.pack(expand=False)
-
-   frame = tk.Frame(top, bg="white")
-   frame.place(relx=0.06, rely=0.10, relwidth=0.9, relheight=0.6)
-
-   closeWin = tk.Button(top, text="Close", padx=35, fg='white', bg="#263D42", command=close_newapps)
-   closeWin.pack()
-   top.grab_set()
-
-
-def runApps():
-    for app in apps:
-        os.startfile(app)
-
-
-def close_apps():
-    print("Window closed by customer")
-    root.destroy()
-
-
-def close_newapps():
-    print("PopWin closed by customer")
-    top.destroy()
-
-canvas = tk.Canvas(root, height=520, width=480, bg="#263D42", cursor='crosshair')
+canvas = tk.Canvas(root, height=520, width=420, bg="#263D42", cursor='crosshair')
 canvas.pack(expand=False)
 
 frame = tk.Frame(root, bg="white")
 frame.place(relx=0.06, rely=0.10, relwidth=0.9, relheight=0.6)
-
-openFile = tk.Button(root, text="Open File", padx=25, fg='white', bg="#263D42", command=addApp)
-openFile.pack()
-
-runApps = tk.Button(root, text="Run Apps", padx=25, fg='white', bg="#263D42", command=runApps)
-runApps.pack()
-
-open_window = tk.Button(root, text="New window", padx=35, fg='white', bg="#263D42", command=open_win)
-open_window.pack()
-
-closeWin = tk.Button(root, text="Close", padx=35, fg='white', bg="#263D42", command=close_apps)
-closeWin.pack()
 
 
 for app in apps:
